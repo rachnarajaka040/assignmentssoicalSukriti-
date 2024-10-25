@@ -11,8 +11,9 @@ function Signup() {
     phoneNumber: "",
     companyName: "",
   });
-  const navigate = useNavigate();
 
+
+  const navigate = useNavigate();
   const handleChange = (event) => {
     const { name, value, type } = event.target;
 
@@ -25,6 +26,7 @@ function Signup() {
     }
   };
 
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -32,6 +34,7 @@ function Signup() {
         "http://localhost:3000/api/rachna/character",
         formData // Just send formData directly
       );
+
       if (response.status !== 201) {
         // Check response status
         throw new Error("Error creating account");

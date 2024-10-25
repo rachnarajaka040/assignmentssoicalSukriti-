@@ -25,6 +25,7 @@ function UserData() {
     fetchData();
   }, []);
 
+
   const handleDelete = async (_id) => {
     try {
       await axios.delete(`http://localhost:3000/api/rachna/character/${_id}`);
@@ -33,6 +34,7 @@ function UserData() {
       console.log(error);
     }
   };
+
 
   const handleEdit = (user) => {
     setEditedUser(user);
@@ -44,6 +46,7 @@ function UserData() {
     setEditedUser({ ...editedUser, [name]: value });
   };
 
+  
   const handleUpdate = async () => {
     try {
       await axios.put(

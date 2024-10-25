@@ -11,9 +11,11 @@ function Login() {
     const handleSubmit = (event) => {
         event.preventDefault();
         localStorage.setItem('myFormData', JSON.stringify(formData));
+        alert("login success")
+        navigate('/userdata');
         document.getElementById('email').value = "";
         document.getElementById('password').value = "";
-     
+         document.getElementById('username').value = "";
     };
 
     return (
