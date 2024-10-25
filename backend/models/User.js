@@ -3,12 +3,19 @@ const bcrypt=require("bcryptjs");
 const jwt=require("jsonwebtoken");
 const userSchema = new mongoose.Schema({
   username: String,
-  email: String,
+  email: {
+    type:String,
+    required: true,
+    trim:true,
+    lowercase:true,
+    unique: true,
+    match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+  },
   password: String,
   phoneNumber: String,
   companyName: String,
   image: String // Assuming the image will be stored as a URL or file path
-});
+},{timestamps:true});
 
 
 
@@ -19,7 +26,7 @@ userSchema.methods.generateToken = function () {
         userId: this._id.toString(), // Corrected typo here
         email: this.email,
       },
-      process.env.JWT_SECRET_KEY, // Corrected spelling here
+      "rachna", // Corrected spelling here
       {
         expiresIn: "38d",
       }

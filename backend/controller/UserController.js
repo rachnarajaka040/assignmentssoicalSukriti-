@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const multer=require("multer");
+const bcrypt=require("bcryptjs");
 
 const upload = multer({
   storage: multer.diskStorage({
@@ -37,7 +38,6 @@ router.post("/upload", upload, async (req, res) => {
   try {
     // Upload file and create user
     // ...
-
     res.send("File uploaded and user created successfully.");
   } catch (error) {
     if (error.code === 11000 && error.keyPattern.email === 1) {
@@ -50,12 +50,29 @@ router.post("/upload", upload, async (req, res) => {
   }
 });
 
+
+
 // POST /api/rachna/character
 router.post("/", async (req, res) => {
   try {
     //console.log("apifhghghh ");
-    const userData = req.body;
-    const newUser = await User.create(userData);
+    const {companyName,email,password, phoneNumber, username} = req.body;
+
+    const existingUser = await User.findOne({ email});
+    if(existingUser){
+      return res.status(400).json({ message: "User already exists." });
+    }
+
+    const hashedPassword = await bcrypt.hash(password,10);
+
+    const newUser= new User({
+      email,
+      companyName,
+      password:hashedPassword,
+      phoneNumber,
+      username,
+    });
+     await newUser.save();
     const token=newUser.generateToken();
     res.status(201).json({user:newUser,token});
   } catch (err) {
