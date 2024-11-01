@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "./UserData.css"; // Import CSS file for styling
 
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+//import { fetchUsers, deleteUser, updateUser } from './redux/actions/userActions'; // Adjust the path as necessary
+import "./UserData.css"; // Import CSS file for styling
+import {fetchUserData ,deleteUser,updateUser} from "../redux/actions/userDataActions"; //
 function UserData() {
-  const [userData, setUserData] = useState([]);
+  const dispatch = useDispatch();
+  const users = useSelector((state) => state.userData.users);
+  
   const [editMode, setEditMode] = useState(false);
   const [editedUser, setEditedUser] = useState({
     username: "",
@@ -11,30 +15,12 @@ function UserData() {
   });
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/api/rachna/character"
-        );
-        setUserData(response.data);
-      } catch (error) {
-        console.log(error, "error");
-      }
-    };
+    dispatch(fetchUserData());
+  }, [dispatch]);
 
-    fetchData();
-  }, []);
-
-
-  const handleDelete = async (_id) => {
-    try {
-      await axios.delete(`http://localhost:3000/api/rachna/character/${_id}`);
-      setUserData(userData.filter((user) => user._id !== _id));
-    } catch (error) {
-      console.log(error);
-    }
+  const handleDelete = (id) => {
+    dispatch(deleteUser(id));
   };
-
 
   const handleEdit = (user) => {
     setEditedUser(user);
@@ -46,23 +32,9 @@ function UserData() {
     setEditedUser({ ...editedUser, [name]: value });
   };
 
-  
-  const handleUpdate = async () => {
-    try {
-      await axios.put(
-        `http://localhost:3000/api/rachna/character/${editedUser._id}`,
-        editedUser
-      );
-      // Update the userData state with the edited user data
-      setUserData(
-        userData.map((user) =>
-          user._id === editedUser._id ? editedUser : user
-        )
-      );
-      setEditMode(false);
-    } catch (error) {
-      console.log(error);
-    }
+  const handleUpdate = () => {
+    dispatch(updateUser(editedUser));
+    setEditMode(false);
   };
 
   return (
@@ -74,15 +46,13 @@ function UserData() {
             <th>Username</th>
             <th>Email</th>
             <th>Phone Number</th>
-
             <th>Company Name</th>
             <th>Delete</th>
             <th>Edit</th>
-            {/* Add more headers if needed */}
           </tr>
         </thead>
         <tbody>
-          {userData.map((user) => (
+          {users.map((user) => (
             <tr key={user._id}>
               <td>{user.username}</td>
               <td>{user.email}</td>
@@ -94,7 +64,6 @@ function UserData() {
               <td>
                 <button onClick={() => handleEdit(user)}>Edit</button>
               </td>
-              {/* Add more cells for additional data */}
             </tr>
           ))}
         </tbody>
